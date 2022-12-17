@@ -1,18 +1,18 @@
-package validator_test
+package validation_test
 
 import (
-	"github.com/ppicom/gdc2022-go/validator"
+	"github.com/ppicom/gdc2022-go/validation"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
 type ValidatorTestSuite struct {
 	suite.Suite
-	service validator.Service
+	service validation.Service
 }
 
 func (suite *ValidatorTestSuite) Test_Acceptance() {
-	service := validator.New()
+	service := validation.New()
 
 	isValid := service.IsValidPassword("Ab3_56789")
 
@@ -93,7 +93,7 @@ func (suite *ValidatorTestSuite) Test_Unit() {
 }
 
 func (suite *ValidatorTestSuite) SetupTest() {
-	suite.service = validator.New()
+	suite.service = validation.New()
 }
 
 func TestValidatorTestSuite(t *testing.T) {
