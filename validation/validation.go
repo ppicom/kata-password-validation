@@ -3,13 +3,17 @@ package validation
 import "regexp"
 
 type Service interface {
-	IsValidPassword(s string) bool
+	IsValidPassword(password string, verification string) bool
 }
 
-type service struct{}
+type service struct {
+	factory factory
+}
 
-func New() Service {
-	return &service{}
+func New(f factory) Service {
+	return &service{
+		factory: f,
+	}
 }
 
 var (
@@ -19,10 +23,6 @@ var (
 	atLeastOneUnderscore      = regexp.MustCompile("_+")
 )
 
-func (s service) IsValidPassword(pass string) bool {
-	return len(pass) > 8 &&
-		atLeastOneCapitalLetter.MatchString(pass) &&
-		atLeastOneLowercaseLetter.MatchString(pass) &&
-		atLeastOneNumber.MatchString(pass) &&
-		atLeastOneUnderscore.MatchString(pass)
+func (s service) IsValidPassword(password string, verification string) bool {
+	return s.factory.Select(verification).Validate(password)
 }
