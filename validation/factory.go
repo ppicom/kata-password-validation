@@ -1,6 +1,6 @@
 package validation
 
-//go:generate mockery --exported --name=factory
+//go:generate mockery --case=underscore --inpackage --name=factory
 type factory interface {
 	With(validators []Validator) factory
 	Select(name string) Validator
@@ -11,12 +11,14 @@ type impl struct {
 }
 
 func Factory() factory {
+
 	return &impl{
 		validators: make(map[string]Validator, 0),
 	}
 }
 
 func (f *impl) With(validators []Validator) factory {
+
 	for _, v := range validators {
 		f.validators[v.Name()] = v
 	}
@@ -24,5 +26,6 @@ func (f *impl) With(validators []Validator) factory {
 }
 
 func (f *impl) Select(name string) Validator {
+
 	return f.validators[name]
 }

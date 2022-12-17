@@ -10,6 +10,7 @@ type FactoryTestSuite struct {
 }
 
 func (suite *FactoryTestSuite) Test_FactoryShouldReturnTheSelectedValidator() {
+
 	validator := NewValidator("select_me")
 	validators := []Validator{
 		NewValidator("select_me"),

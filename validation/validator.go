@@ -1,14 +1,14 @@
 package validation
 
 type Validator interface {
-	Validate(password string) bool
-	With(rules []Rule) Validator
+	Validate(password Password) bool
+	With(rules RuleSet) Validator
 	Equals(validator Validator) bool
 	Name() string
 }
 
 type validatorPrototype struct {
-	rules []Rule
+	rules RuleSet
 	name  string
 }
 
@@ -16,32 +16,27 @@ func NewValidator(name string) Validator {
 
 	return &validatorPrototype{
 		name:  name,
-		rules: make([]Rule, 0),
+		rules: NewRuleset(),
 	}
 }
 
-func (v *validatorPrototype) With(rules []Rule) Validator {
+func (v *validatorPrototype) With(rules RuleSet) Validator {
 
 	v.rules = rules
 	return v
 }
 
-func (v *validatorPrototype) Validate(password string) bool {
+func (v *validatorPrototype) Validate(password Password) bool {
 
-	for _, r := range v.rules {
-
-		if !(r(password)) {
-			return false
-		}
-	}
-
-	return true
+	return v.rules.RunAgainst(password)
 }
 
 func (v *validatorPrototype) Equals(validator Validator) bool {
+
 	return v.Name() == validator.Name()
 }
 
 func (v *validatorPrototype) Name() string {
+
 	return v.name
 }

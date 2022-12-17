@@ -1,7 +1,6 @@
 package validation
 
 import (
-	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -14,32 +13,34 @@ type ValidationTestSuite struct {
 }
 
 func (suite *ValidationTestSuite) Test_Acceptance() {
+
 	const passLen6CapLower = "Aa00000"
 	const passLen8CapLowUnderDigit = "Ab3_56789"
 	const passLen16LowCapUnder = "aaaAAAaaaAAAaaa__"
-	rulesForFirstValidator := []Rule{
-		func(password string) bool { return len(password) > 8 },
-		func(password string) bool { return regexp.MustCompile("[A-Z]+").MatchString(password) },
-		func(password string) bool { return regexp.MustCompile("[a-z]+").MatchString(password) },
-		func(password string) bool { return regexp.MustCompile("[0-9]+").MatchString(password) },
-		func(password string) bool { return regexp.MustCompile("_+").MatchString(password) },
-	}
-	rulesForSecondValidator := []Rule{
-		func(password string) bool { return len(password) > 6 },
-		func(password string) bool { return regexp.MustCompile("[A-Z]+").MatchString(password) },
-		func(password string) bool { return regexp.MustCompile("[a-z]+").MatchString(password) },
-		func(password string) bool { return regexp.MustCompile("[0-9]+").MatchString(password) },
-	}
-	rulesForThirdValidator := []Rule{
-		func(password string) bool { return len(password) > 16 },
-		func(password string) bool { return regexp.MustCompile("[A-Z]+").MatchString(password) },
-		func(password string) bool { return regexp.MustCompile("[a-z]+").MatchString(password) },
-		func(password string) bool { return regexp.MustCompile("_+").MatchString(password) },
-	}
+
+	var firstRuleset RuleSet = NewRuleset().
+		ForExpression("[A-Z]+").
+		ForExpression("[A-Z]+").
+		ForExpression("[A-Z]+").
+		ForExpression("[A-Z]+").
+		ForLength(8)
+
+	secondRuleset := NewRuleset().
+		ForLength(6).
+		ForExpression("[A-Z]+").
+		ForExpression("[a-z]").
+		ForExpression("[0-9]+")
+
+	thirdRuleset := NewRuleset().
+		ForLength(16).
+		ForExpression("[A-Z]+").
+		ForExpression("[a-z]").
+		ForExpression("_+")
+
 	validators := []Validator{
-		NewValidator("validation_1").With(rulesForFirstValidator),
-		NewValidator("validation_2").With(rulesForSecondValidator),
-		NewValidator("validation_3").With(rulesForThirdValidator),
+		NewValidator("validation_1").With(firstRuleset),
+		NewValidator("validation_2").With(secondRuleset),
+		NewValidator("validation_3").With(thirdRuleset),
 	}
 	factory := Factory().With(validators)
 	service := New(factory)
@@ -54,5 +55,6 @@ func (suite *ValidationTestSuite) Test_Acceptance() {
 }
 
 func TestValidationTestSuite(t *testing.T) {
+
 	suite.Run(t, new(ValidationTestSuite))
 }

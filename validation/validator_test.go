@@ -11,11 +11,10 @@ type ValidatorTestSuite struct {
 }
 
 func (suite *ValidatorTestSuite) TestValidatorShouldEnforceARuleOnAPassword() {
-	password := "pass"
+
+	password := password("pass")
 	noRulesValidator := NewValidator("empty_validator")
-	lengthValidator := NewValidator("length_validator").With([]Rule{
-		func(password string) bool { return len(password) > 5 },
-	})
+	lengthValidator := NewValidator("length_validator").With(NewRuleset().ForLength(5))
 
 	validationByEmptyValidator := noRulesValidator.Validate(password)
 	validationByLengthValidator := lengthValidator.Validate(password)
@@ -25,5 +24,6 @@ func (suite *ValidatorTestSuite) TestValidatorShouldEnforceARuleOnAPassword() {
 }
 
 func TestValidatorTestSuite(t *testing.T) {
+
 	suite.Run(t, new(ValidatorTestSuite))
 }
