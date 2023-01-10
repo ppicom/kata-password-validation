@@ -45,9 +45,9 @@ func (suite *ValidationTestSuite) Test_Acceptance() {
 	factory := Factory().With(validators)
 	service := New(factory)
 
-	isValid := service.IsValidPassword(passLen8CapLowUnderDigit, "validation_1")
-	isValidByVal2 := service.IsValidPassword(passLen6CapLower, "validation_2")
-	isValidByVal3 := service.IsValidPassword(passLen16LowCapUnder, "validation_3")
+	isValid := service.IsValidPassword(passLen8CapLowUnderDigit)
+	isValidByVal2 := service.IsValidPassword(passLen6CapLower)
+	isValidByVal3 := service.IsValidPassword(passLen16LowCapUnder)
 
 	suite.Truef(isValid, "Password %s should be valid for validation 1", passLen8CapLowUnderDigit)
 	suite.Truef(isValidByVal2, "Password %s should be valid for validation 2", passLen6CapLower)

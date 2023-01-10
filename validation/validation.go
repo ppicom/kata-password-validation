@@ -1,7 +1,7 @@
 package validation
 
 type Service interface {
-	IsValidPassword(pwd string, verification string) bool
+	IsValidPassword(pwd string) bool
 }
 
 type service struct {
@@ -14,6 +14,14 @@ func New(f factory) Service {
 	}
 }
 
-func (s service) IsValidPassword(pwd string, verification string) bool {
-	return s.factory.Select(verification).Validate(password(pwd))
+func (s service) IsValidPassword(pwd string) bool {
+	allValidators := s.factory.All()
+	i := 0
+	var isValid bool
+
+	for ; !isValid && i < len(allValidators); i++ {
+		isValid = allValidators[i].Validate(password(pwd))
+	}
+
+	return isValid
 }

@@ -4,6 +4,7 @@ package validation
 type factory interface {
 	With(validators []Validator) factory
 	Select(name string) Validator
+	All() []Validator
 }
 
 type impl struct {
@@ -28,4 +29,15 @@ func (f *impl) With(validators []Validator) factory {
 func (f *impl) Select(name string) Validator {
 
 	return f.validators[name]
+}
+
+// All implements factory
+func (f *impl) All() []Validator {
+	all := make([]Validator, 0)
+
+	for _, v := range f.validators {
+		all = append(all, v)
+	}
+
+	return all
 }
