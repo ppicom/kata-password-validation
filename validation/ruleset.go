@@ -12,10 +12,12 @@ type RuleSet interface {
 	WithUppercase() RuleSet
 	WithLowercase() RuleSet
 	RunAgainst(password Password) (invalidBecause []string)
+	CanFail(conditions int) RuleSet
 }
 
 type ruleset struct {
-	rules []Rule
+	rules   []Rule
+	canFail int
 }
 
 func NewRuleset() RuleSet {
@@ -70,6 +72,12 @@ func (r *ruleset) RunAgainst(password Password) (invalidBecause []string) {
 		}
 	}
 
+	if r.canFail > len(invalidBecause) {
+		invalidBecause = []string{}
+	} else {
+		invalidBecause = invalidBecause[r.canFail:]
+	}
+
 	return
 }
 
@@ -89,4 +97,10 @@ func (r *ruleset) WithUppercase() RuleSet {
 func (r *ruleset) WithLowercase() RuleSet {
 
 	return r.ForExpression("[a-z]+")
+}
+
+// CanFail implements RuleSet
+func (r *ruleset) CanFail(conditions int) RuleSet {
+	r.canFail = conditions
+	return r
 }

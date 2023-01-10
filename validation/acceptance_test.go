@@ -84,6 +84,37 @@ func (suite *ValidationTestSuite) TestAcceptance_Reasons() {
 
 }
 
+func (suite *ValidationTestSuite) TestAcceptance_CanFailOne() {
+
+	const passLen6CapLower = "Aa00000"
+	const passLen8CapLowUnderDigit = "Ab3_56789"
+	const passLen16LowCapUnder = "aaaAAAaaaAAAaaa__"
+	ruleSet := NewRuleset().
+		ForLength(16).
+		WithUppercase().
+		WithLowercase().
+		WithUnderscore().
+		CanFail(1)
+	validators := []Validator{
+		NewValidator("validation_1").With(ruleSet),
+	}
+	f := Factory().With(validators)
+	service := New(f)
+
+	_, passLen6CapLowerReasons := service.IsValidPassword(passLen6CapLower)
+	_, passLen8CapLowUnderDigitReasons := service.IsValidPassword(passLen8CapLowUnderDigit)
+
+	suite.NotContains(passLen6CapLowerReasons, "Required len is 16")
+	suite.Contains(passLen6CapLowerReasons, "Password lacks an underscore.")
+	suite.NotContains(passLen6CapLowerReasons, "Password lacks an uppercase letter.")
+	suite.NotContains(passLen6CapLowerReasons, "Password lacks a lowercase letter.")
+	suite.NotContains(passLen8CapLowUnderDigitReasons, "Required len is 16")
+	suite.NotContains(passLen8CapLowUnderDigitReasons, "Password lacks an underscore.")
+	suite.NotContains(passLen8CapLowUnderDigitReasons, "Password lacks an uppercase letter.")
+	suite.NotContains(passLen8CapLowUnderDigitReasons, "Password lacks a lowercase letter.")
+
+}
+
 func TestValidationTestSuite(t *testing.T) {
 
 	suite.Run(t, new(ValidationTestSuite))
