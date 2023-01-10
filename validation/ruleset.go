@@ -1,11 +1,14 @@
 package validation
 
-import "regexp"
+import (
+	"fmt"
+	"regexp"
+)
 
 type RuleSet interface {
 	ForExpression(regex string) RuleSet
 	ForLength(minimum int) RuleSet
-	RunAgainst(password Password) bool
+	RunAgainst(password Password) (invalidBecause []string)
 }
 
 type ruleset struct {
@@ -23,24 +26,46 @@ func (r *ruleset) ForExpression(regex string) RuleSet {
 
 	r.rules = append(
 		r.rules,
-		rule(func(password Password) bool { return regexp.MustCompile(regex).MatchString(password.Value()) }),
+		rule(func(password Password) (invalidBecause string) {
+			if !regexp.MustCompile(regex).MatchString(password.Value()) {
+				switch regex {
+				case "[A-Z]+":
+					invalidBecause = "Password lacks an uppercase letter."
+				case "[a-z]":
+					invalidBecause = "Password lacks a lowercase letter."
+				case "_+":
+					invalidBecause = "Password lacks an underscore."
+				}
+			}
+
+			return
+		}),
 	)
 	return r
 }
 
 func (r *ruleset) ForLength(minimum int) RuleSet {
 
-	r.rules = append(r.rules, rule(func(password Password) bool { return len(password.Value()) > minimum }))
+	r.rules = append(r.rules, rule(func(password Password) (invalidBecause string) {
+		if len(password.Value()) <= minimum {
+			invalidBecause = fmt.Sprintf("Required len is %d", minimum)
+		}
+
+		return
+	}))
 	return r
 }
 
-func (r *ruleset) RunAgainst(password Password) bool {
+func (r *ruleset) RunAgainst(password Password) (invalidBecause []string) {
 
 	for _, rl := range r.rules {
-		if !rl.Run(password) {
-			return false
+
+		reason := rl.Run(password)
+		if reason != "" {
+
+			invalidBecause = append(invalidBecause, reason)
 		}
 	}
 
-	return true
+	return
 }

@@ -14,8 +14,8 @@ func (suite *RulesetTestSuite) TestRulesetShouldRunAllRules() {
 
 	pwd := password("my_password")
 	ruleOne, ruleTwo := NewMockRule(suite.T()), NewMockRule(suite.T())
-	ruleOne.On("Run", pwd).Return(true)
-	ruleTwo.On("Run", pwd).Return(true)
+	ruleOne.On("Run", pwd).Return("")
+	ruleTwo.On("Run", pwd).Return("")
 	ruleset := ruleset{
 		rules: []Rule{
 			ruleOne,

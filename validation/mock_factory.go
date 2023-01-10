@@ -9,6 +9,22 @@ type mockFactory struct {
 	mock.Mock
 }
 
+// All provides a mock function with given fields:
+func (_m *mockFactory) All() []Validator {
+	ret := _m.Called()
+
+	var r0 []Validator
+	if rf, ok := ret.Get(0).(func() []Validator); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]Validator)
+		}
+	}
+
+	return r0
+}
+
 // Select provides a mock function with given fields: name
 func (_m *mockFactory) Select(name string) Validator {
 	ret := _m.Called(name)

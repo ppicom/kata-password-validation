@@ -16,8 +16,8 @@ func (suite *ValidatorTestSuite) TestValidatorShouldEnforceARuleOnAPassword() {
 	noRulesValidator := NewValidator("empty_validator")
 	lengthValidator := NewValidator("length_validator").With(NewRuleset().ForLength(5))
 
-	validationByEmptyValidator := noRulesValidator.Validate(password)
-	validationByLengthValidator := lengthValidator.Validate(password)
+	validationByEmptyValidator, _ := noRulesValidator.Validate(password)
+	validationByLengthValidator, _ := lengthValidator.Validate(password)
 
 	suite.True(validationByEmptyValidator)
 	suite.False(validationByLengthValidator)

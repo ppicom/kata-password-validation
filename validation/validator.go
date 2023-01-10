@@ -1,7 +1,7 @@
 package validation
 
 type Validator interface {
-	Validate(password Password) bool
+	Validate(password Password) (bool, []string)
 	With(rules RuleSet) Validator
 	Equals(validator Validator) bool
 	Name() string
@@ -26,9 +26,11 @@ func (v *validatorPrototype) With(rules RuleSet) Validator {
 	return v
 }
 
-func (v *validatorPrototype) Validate(password Password) bool {
+func (v *validatorPrototype) Validate(password Password) (isValid bool, invalidBecause []string) {
 
-	return v.rules.RunAgainst(password)
+	invalidBecause = v.rules.RunAgainst(password)
+	isValid = len(invalidBecause) == 0
+	return
 }
 
 func (v *validatorPrototype) Equals(validator Validator) bool {

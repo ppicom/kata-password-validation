@@ -10,14 +10,14 @@ type MockRule struct {
 }
 
 // Run provides a mock function with given fields: password
-func (_m *MockRule) Run(password Password) bool {
+func (_m *MockRule) Run(password Password) string {
 	ret := _m.Called(password)
 
-	var r0 bool
-	if rf, ok := ret.Get(0).(func(Password) bool); ok {
+	var r0 string
+	if rf, ok := ret.Get(0).(func(Password) string); ok {
 		r0 = rf(password)
 	} else {
-		r0 = ret.Get(0).(bool)
+		r0 = ret.Get(0).(string)
 	}
 
 	return r0
