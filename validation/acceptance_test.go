@@ -61,9 +61,9 @@ func (suite *ValidationTestSuite) TestAcceptance_Reasons() {
 	const passLen16LowCapUnder = "aaaAAAaaaAAAaaa__"
 	ruleSet := NewRuleset().
 		ForLength(16).
-		ForExpression("[A-Z]+").
-		ForExpression("[a-z]+").
-		ForExpression("_+")
+		WithUppercase().
+		WithLowercase().
+		WithUnderscore()
 	validators := []Validator{
 		NewValidator("validation_1").With(ruleSet),
 	}

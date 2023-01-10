@@ -8,6 +8,9 @@ import (
 type RuleSet interface {
 	ForExpression(regex string) RuleSet
 	ForLength(minimum int) RuleSet
+	WithUnderscore() RuleSet
+	WithUppercase() RuleSet
+	WithLowercase() RuleSet
 	RunAgainst(password Password) (invalidBecause []string)
 }
 
@@ -68,4 +71,22 @@ func (r *ruleset) RunAgainst(password Password) (invalidBecause []string) {
 	}
 
 	return
+}
+
+// WithUnderscore implements RuleSet
+func (r *ruleset) WithUnderscore() RuleSet {
+
+	return r.ForExpression("_+")
+}
+
+// WithUppercase implements RuleSet
+func (r *ruleset) WithUppercase() RuleSet {
+
+	return r.ForExpression("[A-Z]+")
+}
+
+// WithLowercase implements RuleSet
+func (r *ruleset) WithLowercase() RuleSet {
+
+	return r.ForExpression("[a-z]+")
 }
